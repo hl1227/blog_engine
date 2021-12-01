@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="keywords" content="{{data.one_info_data_list[0].keyword}}">
+    <title>{{data.one_info_data_list[0].title}}</title>
+
+</head>
+
+<body>
+
+<div>
+    <p>面包屑:-----------------------------------------------------------------------</p>
+    <p>
+        <a href="/">home</a>
+        -
+        <a href="/{{data.category | replace(' ','-')}}">{{ data.category }}</a>
+        -
+        <a href="">content</a>
+    </p>
+</div>
+
+分类:-----------------------------------------------------------------------
+<ul>
+    {% for category in data.category_list %}
+    <li>
+        <a href="/{{ category.keyword  | replace(' ','-')}}"><p>{{ category.keyword }}</p></a>
+    </li>
+    {% endfor %}
+</ul>
+
+
+详情数据:-----------------------------------------------------------------------
+{% for info_data in data.one_info_data_list %}
+    <p>{{ info_data.title }}</p>
+    <p>{{ info_data.keyword }}</p>
+    <p>{{ info_data.create_time }}</p>
+    <p><img src="{{ info_data.img_src }}" alt=""></p>
+    <p>{{ info_data.content }}</p>
+{% endfor %}
+
+
+随机数据-----------------------------------------------------------------------
+{% for random_data in data.random_info_data_list %}
+    <a href="/{{ random_data.keyword | replace(' ','-') }}/{{ random_data.source }}">
+        <p>{{ random_data.title }}</p></a>
+        <p>{{ random_data.create_time }}</p>
+        <p><img src="{{ random_data.img_src }}" alt=""></p>
+
+{% endfor %}
+</body>
+</html>
