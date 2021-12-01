@@ -81,9 +81,10 @@
 	1.字段名: data.index_data_list
 	2.类型:列表 
 	3.遍历后属性:
-		标题:       单个数据名.title
-		图片链接:   单个数据名.img_src
-		source:    单个数据名.source
+        标题:        单个数据名.title
+        图片链接:     单个数据名.img_src
+        source:      单个数据名.source
+        关键字(分类): 单个数据名.keyword
 #### 6.2 分类页:
 ###### 6.21 分类页面包屑字段:
 	1.字段名: data.category
@@ -98,9 +99,10 @@
 	1.字段名: data.category_data_list
 	2.类型:列表 
 	3.遍历后属性:
-		标题:      单个数据名.title
-		图片链接:  单个数据名.img_src
-		source:   单个数据名.source
+        标题:        单个数据名.title
+        图片链接:     单个数据名.img_src
+        source:      单个数据名.source
+        关键字(分类): 单个数据名.keyword
 ###### 6.24 分类页翻页字段:
 		1.字段名: data.page
 		2.类型:整数

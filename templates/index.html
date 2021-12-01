@@ -23,10 +23,7 @@
     内容:
     {% for index_data in data.index_data_list %}
     <li>
-        <a href="{{index_data.keyword | replace(' ','-')}}/{{index_data.source}}">
-            {{ index_data.title }}
-        </a>
-
+        <a href="{{index_data.keyword | replace(' ','-')}}/{{index_data.source}}">{{ index_data.title }}</a>
         <p><img src='{{index_data.img_src}}' alt=""></p>
     </li>
     {% endfor %}
