@@ -24,6 +24,8 @@
     {% for index_data in data.index_data_list %}
     <li>
         <a href="{{index_data.keyword | replace(' ','-')}}/{{index_data.source}}">{{ index_data.title }}</a>
+        <p>描述:{{index_data.description}}...</p>
+        <span>作者:{{index_data.author}}</span>
         <p><img src='{{index_data.img_src}}' alt=""></p>
     </li>
     {% endfor %}

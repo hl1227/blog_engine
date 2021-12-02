@@ -27,6 +27,8 @@
     {% for category_data in data.category_data_list %}
         <li>
             <a href="{{category_data.keyword | replace(' ','-')}}/{{category_data.source}}"> {{category_data.title}} </a>
+            <p>描述:{{category_data.description}}...</p>
+            <span>作者:{{category_data.author}}</span>
             <p><img src={{category_data.img_src}} alt=""></p>
         </li>
     {% endfor %}

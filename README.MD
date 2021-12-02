@@ -23,6 +23,11 @@
 		2.返回随机获取数据库keyword字段作为分类
 		3.根据source返回一条数据
 		4.随机返回几条数据
+
+#### 2.4 sitemap页
+        1.路径:/sitemap.xml
+        2.根据xml Sitemaps协议
+        3.自动获取用户访问的域名,返回数据库所有分类页URL及最新1000条数据的URL
 ## 3.准备:
 ### 3.1 安装依赖
 ```		
@@ -85,6 +90,8 @@
         图片链接:     单个数据名.img_src
         source:      单个数据名.source
         关键字(分类): 单个数据名.keyword
+        描述:         单个数据名.description
+        作者:         单个数据名.author
 #### 6.2 分类页:
 ###### 6.21 分类页面包屑字段:
 	1.字段名: data.category
@@ -103,6 +110,8 @@
         图片链接:     单个数据名.img_src
         source:      单个数据名.source
         关键字(分类): 单个数据名.keyword
+        描述:         单个数据名.description
+        作者:         单个数据名.author
 ###### 6.24 分类页翻页字段:
 		1.字段名: data.page
 		2.类型:整数
@@ -121,26 +130,31 @@
 	2.类型:列表 
 	3.遍历后属性:
 		关键字(分类):  单个数据名.keyword  
+
 ###### 6.32 详情页数据字段:
 	1.字段名: data.one_info_data_list
 	2.类型:列表 
 	3.遍历后属性:
-		标题:      单个数据名.title
-		关键字:	  单个数据名.keyword
-		创建时间:  单个数据名.create_time
-		图片链接:  单个数据名.img_src
-		正文:	  单个数据名.content
-		source:   单个数据名.source
+            标题:      单个数据名.title
+            关键字:	  单个数据名.keyword
+            创建时间:  单个数据名.create_time
+            图片链接:  单个数据名.img_src
+            正文:	  单个数据名.content
+            source:   单个数据名.source
+            描述:      单个数据名.description
+            作者:      单个数据名.author
 		
 ###### 6.33 详情页随机数据字段:
 	1.字段名: data.random_info_data_list
 	2.类型:列表 
 	3.遍历后属性:
-		标题:       单个数据名.title
-		关键字:	   单个数据名.keyword
-		创建时间:   单个数据名.create_time
-		图片链接:   单个数据名.img_src
-		source:    单个数据名.source
+        标题:       单个数据名.title
+        关键字:	单个数据名.keyword
+        创建时间:   单个数据名.create_time
+        图片链接:   单个数据名.img_src
+        source:    单个数据名.source
+        描述:       单个数据名.description
+        作者:       单个数据名.author
 		
 
 	

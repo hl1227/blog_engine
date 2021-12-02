@@ -35,6 +35,8 @@
 {% for info_data in data.one_info_data_list %}
     <p>{{ info_data.title }}</p>
     <p>{{ info_data.keyword }}</p>
+    <p>{{ info_data.description }}</p>
+    <p>{{ info_data.author }}</p>
     <p>{{ info_data.create_time }}</p>
     <p><img src="{{ info_data.img_src }}" alt=""></p>
     <p>{{ info_data.content }}</p>
@@ -45,7 +47,8 @@
 {% for random_data in data.random_info_data_list %}
     <a href="/{{ random_data.keyword | replace(' ','-') }}/{{ random_data.source }}">
         <p>{{ random_data.title }}</p></a>
-        <p>{{ random_data.create_time }}</p>
+        <p>{{random_data.author}}{{ random_data.create_time }}</p>
+        <p>{{random_data.description }}</p>
         <p><img src="{{ random_data.img_src }}" alt=""></p>
 
 {% endfor %}
