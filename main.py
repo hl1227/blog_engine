@@ -12,8 +12,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[#信任的域
         "http://127.0.0.1",
-        "http://127.0.0.1:8080",'*'
-    ],
+        "http://127.0.0.1:8080",'*'],
     allow_credentials=True,#允许的证书
     allow_methods=["*"],   #跨域的请求方法[get,post,put]
     allow_headers=["*"],   #允许的请求头

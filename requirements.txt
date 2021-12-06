@@ -10,6 +10,8 @@ Jinja2==3.0.3
 MarkupSafe==2.0.1
 pydantic==1.8.2
 PyMySQL==1.0.2
+python-multipart==0.0.5
+six==1.16.0
 sniffio==1.2.0
 SQLAlchemy==1.4.27
 starlette==0.16.0
