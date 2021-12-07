@@ -16,34 +16,34 @@ def get_db():
     finally:
         db.close()
 
-#登录页
-@application.get('/login')
-async def login(request:Request):
-    return templates.TemplateResponse(
-        'login.html', {
-            "request": request,
-            'data': {'msg':''}
-        })
-#验证登录
-@application.post('/login/verify')
-async def verify(request:Request,username=Form(...),password=Form(...)):
-    if username==password :
-        return RedirectResponse('/',status_code=302)
-    else:
-        return templates.TemplateResponse(
-            'login.html', {
-                "request": request,
-                'data': {'msg': '账户密码错误'}
-            })
+# #登录页
+# @application.get('/login')
+# async def login(request:Request):
+#     return templates.TemplateResponse(
+#         'login.html', {
+#             "request": request,
+#             'data': {'msg':''}
+#         })
+# #验证登录
+# @application.post('/login/verify')
+# async def verify(request:Request,username=Form(...),password=Form(...)):
+#     if username==password :
+#         return RedirectResponse('/',status_code=302)
+#     else:
+#         return templates.TemplateResponse(
+#             'login.html', {
+#                 "request": request,
+#                 'data': {'msg': '账户密码错误'}
+#             })
 
 @application.get('/robots.txt')
-async def robots():
+def robots():
     return RedirectResponse('/static/robots.txt',status_code=302)
 
 
 #站点地图
 @application.get('/sitemap.xml')
-async def sitemap(request:Request,db=Depends(get_db)):
+def sitemap(request:Request,db=Depends(get_db)):
     #request.client.host
     domain='http://{}/'.format(request.headers.get("host"))
     res_1='''
@@ -70,7 +70,7 @@ async def sitemap(request:Request,db=Depends(get_db)):
 
 #主页
 @application.get('/')
-async def index(request:Request,db=Depends(get_db)):
+def index(request:Request,db=Depends(get_db)):
     category_list = get_data.get_categorys(db, count=config.INDEX_CATEGORY_COUNT)
     index_data_list=get_data.index_data(db,0,config.INDEX_DATA_COUNT)
     return templates.TemplateResponse(
@@ -82,7 +82,9 @@ async def index(request:Request,db=Depends(get_db)):
         })
 #分类页
 @application.get('/{category}')
-async def category(request:Request,category:str,page:int=1,count:int=config.CATEGORY_DATA_COUNT,db=Depends(get_db)):
+def category(request:Request,category:str,page:int=1,count:int=config.CATEGORY_DATA_COUNT,db=Depends(get_db)):
+    if page==0:
+        return templates.TemplateResponse('404.html', {"request": request})
     category=category.replace('-',' ')
     category_data_list = get_data.index_data(db,page-1,count,category)
     if len(category_data_list)<1:
@@ -98,7 +100,7 @@ async def category(request:Request,category:str,page:int=1,count:int=config.CATE
         })
 #详情页
 @application.get('/{category}/{source}')
-async def category(request:Request,category,source,db=Depends(get_db)):
+def category(request:Request,category,source,db=Depends(get_db)):
     category = category.replace('-', ' ')
     one_info_data_list =get_data.index_data(db,0,1,source=source)
     if len(one_info_data_list)<1:

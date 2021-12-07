@@ -11,7 +11,7 @@
  Target Server Version : 50730
  File Encoding         : 65001
 
- Date: 01/12/2021 17:30:47
+ Date: 06/12/2021 14:20:41
 */
 
 SET NAMES utf8mb4;
@@ -36,8 +36,10 @@ CREATE TABLE `data`  (
   `luo_release` tinyint(1) NULL DEFAULT 0,
   `li_release` tinyint(1) NULL DEFAULT 0,
   `img_src` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '图片链接',
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '摘要',
+  `author` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '作者',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `source`(`source`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3570 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3898 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;
