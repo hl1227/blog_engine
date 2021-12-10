@@ -9,7 +9,7 @@
 </head>
 
 <body>
-
+{% autoescape false %}
 <div>
     <p>面包屑:-----------------------------------------------------------------------</p>
     <p>
@@ -32,6 +32,7 @@
 
 
 详情数据:-----------------------------------------------------------------------
+<div escape="false">
 {% for info_data in data.one_info_data_list %}
     <p>{{ info_data.title }}</p>
     <p>{{ info_data.keyword }}</p>
@@ -39,9 +40,11 @@
     <p>{{ info_data.author }}</p>
     <p>{{ info_data.create_time }}</p>
     <p><img src="{{ info_data.img_src }}" alt=""></p>
-    <p>{{ info_data.content }}</p>
-{% endfor %}
 
+    <p>{{ info_data.content }}</p>
+
+{% endfor %}
+</div>
 
 随机数据-----------------------------------------------------------------------
 {% for random_data in data.random_info_data_list %}
@@ -50,7 +53,17 @@
         <p>{{random_data.author}}{{ random_data.create_time }}</p>
         <p>{{random_data.description }}</p>
         <p><img src="{{ random_data.img_src }}" alt=""></p>
-
 {% endfor %}
+
+
+其他数据---------------------------------------------------------------------
+{% for other_data in data.other_info_data_list %}
+    <a href="/{{ other_data.keyword | replace(' ','-') }}/{{ other_data.source }}">
+        <p>{{ other_data.title }}</p></a>
+        <p>{{other_data.author}}{{ other_data.create_time }}</p>
+        <p>{{other_data.description }}</p>
+        <p><img src="{{ other_data.img_src }}" alt=""></p>
+{% endfor %}
+{% endautoescape %}
 </body>
 </html>

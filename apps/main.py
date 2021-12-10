@@ -45,7 +45,7 @@ def robots():
 @application.get('/sitemap.xml')
 def sitemap(request:Request,db=Depends(get_db)):
     #request.client.host
-    domain='http://{}/'.format(request.headers.get("host"))
+    domain='https://{}/'.format(request.headers.get("host"))
     res_1='''
         <urlset
         xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -84,11 +84,11 @@ def index(request:Request,db=Depends(get_db)):
 @application.get('/{category}')
 def category(request:Request,category:str,page:int=1,count:int=config.CATEGORY_DATA_COUNT,db=Depends(get_db)):
     if page==0:
-        return templates.TemplateResponse('404.html', {"request": request})
+        return templates.TemplateResponse('404.html', {"request": request},status_code=404)
     category=category.replace('-',' ')
     category_data_list = get_data.index_data(db,page-1,count,category)
-    if len(category_data_list)<1:
-        return templates.TemplateResponse('404.html',{"request": request})
+    if len(category_data_list)<1 :
+        return templates.TemplateResponse('404.html',{"request": request},status_code=404)
     category_list = get_data.get_categorys(db, count=config.CATEGORY_CATEGORY_COUNT)
     max_page=get_data.count_by_category(db,category)//count+1
     return templates.TemplateResponse(
@@ -100,18 +100,21 @@ def category(request:Request,category:str,page:int=1,count:int=config.CATEGORY_D
         })
 #详情页
 @application.get('/{category}/{source}')
-def category(request:Request,category,source,db=Depends(get_db)):
+def info(request:Request,category,source,db=Depends(get_db)):
     category = category.replace('-', ' ')
     one_info_data_list =get_data.index_data(db,0,1,source=source)
     if len(one_info_data_list)<1:
-        return templates.TemplateResponse('404.html',{"request": request})
+        return templates.TemplateResponse('404.html',{"request": request},status_code=404)
     category_list = get_data.get_categorys(db, count=config.INFO_CATEGORY_COUNT)
     random_info_data_list=get_data.info_data(db,count=config.INFO_RANDOM_DATA_COUNT)
+    other_info_data_list=get_data.info_data(db,count=10,keyword=category,source=source.replace('-',' '))
     return templates.TemplateResponse(
         'info.html', {
             "request": request,
             'code':200,
             'msg':'成功',
-            'data':{'one_info_data_list':one_info_data_list,'category':category,'category_list':category_list,'random_info_data_list':random_info_data_list}
+            'data':{'one_info_data_list':one_info_data_list,
+                    'category':category,'category_list':category_list,
+                    'random_info_data_list':random_info_data_list,'other_info_data_list':other_info_data_list}
         })
 
