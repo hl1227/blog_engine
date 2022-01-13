@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Admin| Log in</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- SweetAlert2 -->
+  <link rel="stylesheet" href="/admin/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="/admin/plugins/fontawesome-free/css/all.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/admin/css/adminlte.min.css">
+<!--  &lt;!&ndash; Google Font: Source Sans Pro &ndash;&gt;-->
+<!--  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">-->
+</head>
+<body class="hold-transition login-page">
+<div class="login-box">
+  <div class="login-logo">
+    <b>博客后端管理系统</b>
+  </div>
+  <!-- /.login-logo -->
+  <div class="card">
+    <div class="card-body login-card-body">
+
+      <form action="/admin/login/token" method="post">
+        <div class="input-group mb-3">
+          <input type="" name="username" class="form-control" placeholder="Email">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-envelope"></span>
+            </div>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <input type="password" name="password" class="form-control" placeholder="Password" id="password">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div>
+        <div >
+          <!-- /.col -->
+            <button type="submit" class="btn btn-success btn-block login_btn">登录</button>
+          <!-- /.col -->
+        </div>
+      </form>
+
+      <div class="social-auth-links text-center mb-3">
+        <p>- OR -</p>
+        <button href="#" class="btn btn-block btn-primary" data-toggle="modal" data-target="#registered_user">注册</button>
+
+      </div>
+      <!-- /.social-auth-links -->
+    </div>
+    <!-- /.login-card-body -->
+  </div>
+</div>
+<!-- /.login-box -->
+
+<!--注册弹出框-->
+<div class="modal fade" id="registered_user">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">注册用户</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        用户名:<input class="form-control"  type="text" id="c_username">
+        密码:<input class="form-control"  type="password" id="c_password" >
+        再次输入密码:<input class="form-control"  type="password" id="c_password2" >
+        昵称:<input class="form-control"  type="text" id="c_nickname" >
+        邮箱:<input class="form-control"  type="text" id="c_email" >
+        手机号码:<input class="form-control"  type="text" id="c_phone_num" oninput = "value=value.replace(/[^\d]/g,'')" >
+        权限:<input class="form-control"  type="text" id="c_authority" readonly="readonly" value='1'>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
+        <button id="CreateUserBtn" type="button" class="btn btn-primary">注册</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+<!-- SweetAlert2 -->
+<script src="/admin/plugins/sweetalert2/sweetalert2.min.js"></script>
+<script src="/admin/plugins/editor.md/js/editormd.min.js"></script>
+<!-- jQuery -->
+<script src="/admin/plugins/jquery/jquery.min.js"></script>
+<script src="/admin/plugins/jquery/jquery.md5.js"></script>
+
+<!-- Bootstrap 4 -->
+<script src="/admin/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="/admin/js/adminlte.min.js"></script>
+<script>
+    //Initialize SweetAlert2
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'center',
+        showConfirmButton: true,
+        timer: 3000
+    });
+  //登录密码加密
+  $('.login_btn').on('click', function () {
+    var p= $.md5(p=$('#password').val())
+    $('#password').val(p);
+  });
+
+  //注册用户
+  $('#CreateUserBtn').on('click', function () {
+    //判断账号
+    if ($('#c_username').val().length < 8){
+      return Toast.fire({icon: 'error', title: '用户名长度必须大于7位'});
+    }
+    //判断密码是否相等
+    if ($('#c_password').val() != $('#c_password2').val() || $('#c_password').val().length <8){
+      return Toast.fire({icon: 'error', title: '密码不一致或长度小于8位'});
+    };
+    //判断电话号码长度:
+    if ($('#c_phone_num').val().length !==11){
+      return Toast.fire({icon: 'error', title: '电话号码错误'});
+    }
+    $.ajax({
+            type: "post",
+            url: "/admin/login/create_user", //换成这个接口
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+              username:$('#c_username').val(),
+              password_hx:$.md5($('#c_password').val()),
+              nickname:$('#c_nickname').val(),
+              email:$('#c_email').val(),
+              phone_num:$('#c_phone_num').val(),
+              authority:parseInt($('#c_authority').val()),
+            }),
+            success: function (data) {
+                if (data['msg'].indexOf('成功') != -1){
+                    Toast.fire({
+                    icon: 'success',
+                    title: data['msg']});
+                    setTimeout(
+                      function(){location.reload()},
+                      2000);
+                }else{
+                    Toast.fire({
+                    icon: 'error',
+                    title: data['msg']});
+                }
+            }
+        })
+  });
+</script>
+</body>
+</html>

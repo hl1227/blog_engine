@@ -1,44 +1,21 @@
-from fastapi import APIRouter,Depends,Request,Response,Form
+from fastapi import APIRouter,Depends,Request,Response,Form,Cookie
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
-from db.session import SessionLocal
+from db.session import get_db
 from crud import get_data
 import config,datetime
+
 
 application = APIRouter()
 
 templates = Jinja2Templates(directory='./templates')
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
-# #登录页
-# @application.get('/login')
-# async def login(request:Request):
-#     return templates.TemplateResponse(
-#         'login.html', {
-#             "request": request,
-#             'data': {'msg':''}
-#         })
-# #验证登录
-# @application.post('/login/verify')
-# async def verify(request:Request,username=Form(...),password=Form(...)):
-#     if username==password :
-#         return RedirectResponse('/',status_code=302)
-#     else:
-#         return templates.TemplateResponse(
-#             'login.html', {
-#                 "request": request,
-#                 'data': {'msg': '账户密码错误'}
-#             })
 
 @application.get('/robots.txt')
 def robots():
     return RedirectResponse('/static/robots.txt',status_code=302)
+
 
 
 #站点地图
@@ -73,12 +50,13 @@ def sitemap(request:Request,db=Depends(get_db)):
 def index(request:Request,db=Depends(get_db)):
     category_list = get_data.get_categorys(db, count=config.INDEX_CATEGORY_COUNT)
     index_data_list=get_data.index_data(db,0,config.INDEX_DATA_COUNT)
+    host = request.headers.get("host")
     return templates.TemplateResponse(
         'index.html',{
             "request": request,
             'code':200,
             'msg':'成功',
-            'data':{'index_data_list':index_data_list,'category_list':category_list}
+            'data':{'index_data_list':index_data_list,'category_list':category_list,'host':host}
         })
 #分类页
 @application.get('/{category}')
@@ -91,12 +69,13 @@ def category(request:Request,category:str,page:int=1,count:int=config.CATEGORY_D
         return templates.TemplateResponse('404.html',{"request": request},status_code=404)
     category_list = get_data.get_categorys(db, count=config.CATEGORY_CATEGORY_COUNT)
     max_page=get_data.count_by_category(db,category)//count+1
+    host = request.headers.get("host")
     return templates.TemplateResponse(
         'category.html', {
             "request": request,
             'code':200,
             'msg':'成功',
-            'data':{'category_data_list':category_data_list,'category':category,'category_list':category_list,'page':page,'max_page':max_page}
+            'data':{'category_data_list':category_data_list,'category':category,'category_list':category_list,'page':page,'max_page':max_page,'host':host}
         })
 #详情页
 @application.get('/{category}/{source}')
@@ -105,9 +84,10 @@ def info(request:Request,category,source,db=Depends(get_db)):
     one_info_data_list =get_data.index_data(db,0,1,source=source)
     if len(one_info_data_list)<1:
         return templates.TemplateResponse('404.html',{"request": request},status_code=404)
+    host=request.headers.get("host")
     category_list = get_data.get_categorys(db, count=config.INFO_CATEGORY_COUNT)
     random_info_data_list=get_data.info_data(db,count=config.INFO_RANDOM_DATA_COUNT)
-    other_info_data_list=get_data.info_data(db,count=10,keyword=category,source=source.replace('-',' '))
+    other_info_data_list=get_data.info_data(db,count=10,keyword=category.replace('-',' '),source=source)
     return templates.TemplateResponse(
         'info.html', {
             "request": request,
@@ -115,6 +95,7 @@ def info(request:Request,category,source,db=Depends(get_db)):
             'msg':'成功',
             'data':{'one_info_data_list':one_info_data_list,
                     'category':category,'category_list':category_list,
-                    'random_info_data_list':random_info_data_list,'other_info_data_list':other_info_data_list}
+                    'random_info_data_list':random_info_data_list,'other_info_data_list':other_info_data_list,
+                    'host':host}
         })
 

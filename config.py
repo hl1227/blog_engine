@@ -1,7 +1,7 @@
 
 
 #连接数据库URL
-SQLALCHEMY_DATABASE_URL='mysql+pymysql://root:itfkgsbxf3nyw6s1@154.212.112.247:13006/video_txt?charset=utf8'
+SQLALCHEMY_DATABASE_URL='mysql+pymysql://root:itfkgsbxf3nyw6s1@154.212.112.247:13006/video_txt?charset=utf8mb4'
 
 #主页随机分类个数
 INDEX_CATEGORY_COUNT=8

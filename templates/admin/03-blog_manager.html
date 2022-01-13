@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>后台|博客管理</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- DataTables -->
+  <link rel="stylesheet" href="./plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="./plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+
+  <!-- Theme style -->
+  <link rel="stylesheet" href="./css/adminlte.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="./plugins/fontawesome-free/css/all.min.css">
+  <!-- SweetAlert2 -->
+  <link rel="stylesheet" href="./plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+  <!-- Navbar -->
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fa fa-bars"></i></a>
+      </li>
+    </ul>
+
+    <!-- Right navbar links -->
+    <ul class="navbar-nav ml-auto">
+      <!-- Messages Dropdown Menu -->
+      <li class="nav-item dropdown">
+        <a class="nav-link" href="/">
+          <i class="fa fa-paper-plane"></i>
+          <span>博客前台首页</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <h1>
+      <!-- 当前用户 -->
+      <a href="/admin/configuration" class="brand-link">
+        <img src="{{data.user.head_portrait}}" class="brand-image img-circle elevation-3">
+        <span class="brand-text font-weight-light">欢迎:{{data.user.nickname}}</span>
+      </a>
+    </h1>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          <!-- Add icons to the links using the .nav-icon class
+               with font-awesome or any other icon font library -->
+          <li class="nav-header">仪表盘</li>
+          <li class="nav-item">
+            <a href="/admin" class="nav-link active">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>仪表盘</p>
+            </a>
+          </li>
+          <li class="nav-header">博客编辑</li>
+          <li class="nav-item">
+            <a href="/admin/issue_blog" class="nav-link">
+              <i class="nav-icon fas fa-edit"></i>
+              <p>发布博客</p>
+            </a>
+          </li>
+          <li class="nav-header">管理模块</li>
+          <li class="nav-item">
+            <a href="/admin/blog_manager" class="nav-link">
+              <i class="fa fa-list-alt nav-icon" aria-hidden="true"></i>
+              <p>博客管理</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/admin/category_manager" class="nav-link">
+              <i class="fa fa-bookmark nav-icon" aria-hidden="true"></i>
+              <p>分类管理</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/admin/tag_manager" class="nav-link">
+              <i class="fa fa-tags nav-icon" aria-hidden="true"></i>
+              <p>标签管理</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/admin/comment_manager" class="nav-link">
+              <i class="fa fa-comments nav-icon" aria-hidden="true"></i>
+              <p>评论管理</p>
+            </a>
+          </li>
+          <li class="nav-header">系统管理</li>
+          <li class="nav-item">
+            <a href="/admin/configuration"
+               class="nav-link">
+              <i class="fa fa-wrench nav-icon"></i>
+              <p>个人中心</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/admin/logout" class="nav-link">
+              <i class="fa fa-sign-out-alt nav-icon"></i>
+              <p>安全退出</p>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper mt-3">
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <div class="card card-teal card-outline">
+              <div class="card-header">
+                <h3 class="card-title">博客列表</h3>
+              </div>
+              <div class="card-body">
+                <!--搜索  https://datatables.net/reference/api/column().search()-->
+                <div class="search" style="width:600px;">
+                  <input id="search_input" type="text" placeholder="请输入需要搜索的关键字" style="width: 476px;height: 50px;padding: 10px 0 10px 20px;line-height: 26px;font-size: 20px;border: solid 2px #2a99e2;vertical-align: middle;position: center">
+                  <button id="search_btn" class="btn btn-primary btn-sm" style="width: 100px;height: 50px;text-align:center;font-size: 25px;">搜索</button>
+                </div>
+                <br>
+                <hr class="m-0">
+                <!--筛选-->
+                <div class="screen">
+                  <span>筛选:</span>
+                  <br><br>
+                  关键字: <select id="screen_keyword" name="status"  style="width:30%;height:30px">-->
+                    <option></option>
+                   {%for category in data.category_list%}
+                  <option value="{{category.keyword}}">{{category.keyword}}</option>
+                  {%endfor%}
+                  </select>
+                  显示状态: <select id="screen_status" name="status"  style="width:30%;height:30px">-->
+                    <option></option>
+                    <option value="0">未显示</option>
+                    <option value="1">已显示</option>
+                  </select>
+                  <br><br>
+                  <div>
+                    <button type="button" class="btn btn-danger">重置</button>
+                    <button type="button" class="btn btn-success">查询</button>
+                  </div>
+                </div>
+              </div>
+              <hr class="m-0">
+              <!-- /.card-header -->
+              <div class="card-body table-responsive">
+                <table id="testTable" class="table table-bordered table-hover text-nowrap">
+                  <thead>
+                  <tr style="background: rgb(48, 65, 86); color: white;">
+                    <th><input type="checkbox" value="' + data + '" name="id"/></th>
+                    <th>标题</th>
+                    <th >关键字</th>
+                    <th>展示</th>
+                    <th>作者</th>
+                    <th>摘要</th>
+                    <th>内容</th>
+                    <th>图片链接</th>
+                    <th>发布时间</th>
+                    <th>source</th>
+                    <th>操作</th>
+                  </tr>
+                  </thead>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+
+      </div>
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <footer class="main-footer">
+    <p class="text-center mb-1">
+      Copyright © 2020 ZengZK Designed by ZengZK Powered by AdminLTE
+    </p>
+    <p class="text-center">
+      <a href="">粤ICP备20040058号</a>
+    </p>
+  </footer>
+</div>
+<!-- ./wrapper -->
+
+<!--查看弹出框-->
+<div class="modal fade" id="CheckDataModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">博客详情</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        id:<input class="form-control" readonly="readonly" type="text" id="check_id" name="check_id">
+        标题:<input class="form-control" readonly="readonly" type="text" id="check_title" name="check_title">
+        关键字(用于分类):<input class="form-control" readonly="readonly" type="text" id="check_keyword" name="check_keyword">
+        状态(是否展示):
+        <div class="custom-control custom-switch custom-switch-on-success">
+          <input type="checkbox" id="check_status" disabled="disabled" class="custom-control-input" value=0 checked>
+          <label class="custom-control-label" for="check_status"></label>
+        </div>
+        作者:<input class="form-control" readonly="readonly" type="text" id="check_author" name="check_author">
+        摘要:<input class="form-control" readonly="readonly" type="text" id="check_description" name="check_description">
+        图片链接:<input class="form-control" readonly="readonly" type="text" id="check_img_src" name="check_img_src">
+        发布时间:<input class="form-control" readonly="readonly" type="text" id="check_create_time" name="check_create_time">
+        博客内容:<input class="form-control" readonly="readonly" type="text" id="check_content" name="check_content" style="word-break:break-all">
+        source(唯一标识,用于网址):<input class="form-control" readonly="readonly" type="text" id="check_source" name="check_source">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
+<!--        <button id="updateCategoryBtn" type="button" class="btn btn-success">修改</button>-->
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+<!--修改弹出框-->
+<div class="modal fade" id="UpdateDataModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">修改博客</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input class="form-control" style='display: none;' type="text" id="id" name="id">
+        标题:<input class="form-control"  type="text" id="title" name="title">
+        关键字(用于分类):<input class="form-control"  type="text" id="keyword" name="keyword">
+        状态(是否展示):
+<!--        <div class="custom-control custom-switch custom-switch-on-success">-->
+<!--          <input type="checkbox" id="status" class="custom-control-input" value=0 checked>-->
+<!--          <label class="custom-control-label" for="status"></label>-->
+<!--        </div>-->
+        <select id="status" name="status"  style="width: 100%;height:calc(2.25rem + 2px)">-->
+          <option value="1">已展示</option>
+          <option value="0">未展示</option>
+        </select>
+        作者:<input class="form-control"  type="text" id="author" name="author">
+        摘要:<input class="form-control"  type="text" id="description" name="description">
+        图片链接:<input class="form-control"  type="text" id="img_src" name="img_src">
+        博客内容:<input class="form-control"  type="text" id="content" name="content" style="word-break:break-all">
+        发布时间:<input class="form-control"  type="text" id="create_time" name="create_time" readonly="readonly">
+        <input class="form-control" style='display: none;' type="text" id="source" name="source">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>
+        <button id="UpdateDataBtn" type="button" class="btn btn-danger">修改</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+<!--删除弹出框-->
+<div class="modal fade" id="DeleteDataModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">删除博客</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="m-0">确定要删除:
+        <input class="form-control" readonly="readonly" type="text" id ="delete_id" style='display: none;'>
+        <input class="form-control" readonly="readonly" type="text" id ="delete_title">
+        </p>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+        <button id="DeleteDataBtn" type="button" class="btn btn-danger">删除</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+
+<!-- jQuery -->
+<script src="./plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="./plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- DataTables -->
+<script src="./plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="./plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="./plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="./plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+
+<!-- SweetAlert2 -->
+<script src="./plugins/sweetalert2/sweetalert2.min.js"></script>
+<script src="./plugins/editor.md/js/editormd.min.js"></script>
+<!-- AdminLTE App -->
+<script src="./js/adminlte.min.js"></script>
+
+<script>
+
+</script>
+
+<!--<script>-->
+<!--  function add_data(){-->
+<!--    window.location.href="/admin/issue_blog";-->
+<!--  }-->
+<!--  function check_data(){-->
+<!--    debugger;-->
+<!--    console.log(888)-->
+<!--    //console.log(row)-->
+<!--    console.log($(this).parents("tr").children("td").children('#ti').text())-->
+<!--    //$('#title').val(row.title)-->
+<!--  }-->
+<!--</script>-->
+
+<script>
+$(function () {
+    var table=$('#testTable').DataTable({
+      ajax: './blog_manager/data', // 从一个ajax数据源读取数据给表格内容
+      lengthMenu: [10, 20, 30, 60], // 定义在每页显示记录数的select中显示的选项
+      // displayLength: 20, //
+      // displayStart: 1, //初始化显示的时候从第几条数据开始显示(一开始显示第几页)
+      // lengthChange: false, // 是否允许用户改变表格每页显示的记录数
+      searching: false,
+      responsive: false,
+      // info: false,
+      processing: true, // 是否显示处理状态
+      // serverSide: true, // 是否开启服务器模式
+      autoWidth: true, // 控制Datatables是否自适应宽度
+      deferRender: true, // 控制Datatables的延迟渲染，可以提高初始化的速度
+      stateSave: true, //保存状态 - 在页面重新加载的时候恢复状态（页码等内容）
+      // dom: '<"top"i>rt<ip>',
+      dom: '<"row"<"col-md-12"<"float-left"l><"#topPlugin.float-right">>>irt<"mt-3 pagination-sm"p>',
+      initComplete: renderTopPlugin, // 初始化结束后的回调函数
+      ordering: false,
+      columns: [
+        {
+          data: "id",
+          render: function (data, type, row, meta) {
+            return '<input class="id" type="checkbox" value="' + data + '" name="id"/>';
+          }
+        },
+        {data: "title", render: function (data, type, row, meta) {
+            return '<div class="title">'+data+'</div>';
+          }},
+        {data: "keyword",render: function (data, type, row, meta) {
+            return '<div class="keyword">'+data+'</div>';
+          }},
+        {
+          data: "status",
+          render: function (data, type, row, meta) {
+            if (data === 1) {
+              data = '<div class="custom-control custom-switch custom-switch-on-success"><input type="checkbox" id="customSwitch' + row.id + '" class="custom-control-input sta777" value=1 checked><label class="custom-control-label" for="customSwitch' + row.id + '"></label></div>';
+            } else {
+              data = '<div class="custom-control custom-switch custom-switch-on-success"><input type="checkbox" id="customSwitch' + row.id + '" class="custom-control-input sta777" value=0><label class="custom-control-label" for="customSwitch' + row.id + '"></label></div>';
+            }
+            return data;
+          }},
+        {data:'author',render: function (data, type, row, meta) {
+          return "<div class='author'>" + data + "</div>"
+          }},
+        {data:'description',render: function (data, type, row, meta) {
+          return "<div>" + data.substring(0,30) + "..."+"<div class='description' style='display: none;'>"+ data+"</div>"+"</div>"
+          }},
+        {data: "content", render: function (data, type, row, meta) {
+            let temp = data.substring(0,30) + '...'
+            return "<div>" + temp + "<div class='content' style='display: none;'>" + data + "</div>" + "</div>";
+         }},
+        {data: "img_src", render: function (data, type, row, meta) {
+            return "<img src='"+data+"' width='100' height='30'>"+"<div class='img_src' style='display: none;'>" + data + "</div>";
+
+         }},
+        {data: "create_time",render: function (data, type, row, meta) {
+            return '<div class="create_time">'+data+'</div>';
+          }},
+        {data:'source',render: function (data, type, row, meta) {
+          return "<div class='source'>" + data + "</div>"
+          }},
+        {
+          render: function (data, type, row, meta) {
+            //check_data(row)
+            return '<button class="btn btn-primary btn-xs check_btn1" data-toggle="modal" data-target="#CheckDataModal">查看</button> <button class="btn btn-success btn-xs update_btn1" data-toggle="modal" data-target="#UpdateDataModal">修改</button> <button class="btn btn-danger btn-xs delete_btn1" data-toggle="modal" data-target="#DeleteDataModal">删除</button> '
+          }
+        }
+      ],
+      language: { // 国际化配置
+        decimal: "",
+        emptyTable: "表格为空",
+        info: "显示从_START_到_END_条记录 (总记录数为_TOTAL_条)",
+        infoEmpty: "记录数为0",
+        infoFiltered: "(从_MAX_条记录过滤)",
+        infoPostFix: "",
+        thousands: ",",
+        lengthMenu: "显示 _MENU_ 条",
+        loadingRecords: "Loading...",
+        processing: "正在获取数据，请稍后...",
+        sSearch: "搜索",
+        zeroRecords: "没有找到数据",
+        paginate: {
+          previous: "上一页",
+          first: "第一页",
+          next: "下一页",
+          last: "最后一页"
+        }
+      },
+    });
+
+    /**
+     * 表格加载渲染完毕后执行的方法
+     * @param data
+     */
+    function renderTopPlugin(data) {
+      //上方topPlugin DIV中追加HTML
+      //var topPlugin='<button id="addButton" class="btn btn-success btn-sm" data-toggle="modal" data-target="#addUser" style="display:block;">' +
+      // '<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加用户</button>';
+      //删除用户按钮的HTMLDOM
+      var topPlugin = '<button class="btn btn-danger btn-sm">批量删除</button> <button class="btn btn-primary btn-sm" id="add-data" >新增</button> <button class="btn btn-info btn-sm">导出全部</button>';
+      $("#topPlugin").append(topPlugin);//在表格上方topPlugin DIV中追加HTML
+      //$("#expCsv").on("click", exp1);//给下方按钮绑定事件
+    }
+
+    const Toast = Swal.mixin({
+          toast: true,
+          position: 'center',
+          showConfirmButton: true,
+          timer: 3000
+      });
+    //新增按钮
+    $(document).on('click','#add-data', function () {
+      window.location.href="/admin/issue_blog";
+    });
+    // 将数据传输到查看弹框里
+    $(document).on("click", ".check_btn1", function () {
+      $('#check_id').val($(this).parents("tr").children("td").children(".id").val());
+      $('#check_title').val($(this).parents("tr").children("td").children(".title").text());
+      $('#check_keyword').val($(this).parents("tr").children("td").children(".keyword").text());
+      var status=$(this).parents("tr").children("td").children("div").children(".sta777").val()
+      if (status==1) {$('#check_status').prop('checked',true);} else {$('#check_status').prop('checked',false);}
+      $('#check_author').val($(this).parents("tr").children("td").children(".author").text());
+      $('#check_description').val($(this).parents("tr").children("td").children("div").children(".description").text());
+      $('#check_img_src').val($(this).parents("tr").children("td").children(".img_src").text());
+      $('#check_create_time').val($(this).parents("tr").children("td").children(".create_time").text());
+      $('#check_content').val($(this).parents("tr").children("td").children("div").children(".content").text());
+      $('#check_source').val($(this).parents("tr").children("td").children(".source").text());
+    });
+    // 将数据传输到修改弹框里
+    $(document).on("click", ".update_btn1", function () {
+      $('#id').val($(this).parents("tr").children("td").children(".id").val());
+      $('#title').val($(this).parents("tr").children("td").children(".title").text()).removeAttr('readonly');
+      $('#keyword').val($(this).parents("tr").children("td").children(".keyword").text()).removeAttr('readonly');
+      var status=$(this).parents("tr").children("td").children("div").children(".sta777").val()
+      if (status==1) {$('#status').prop('checked',true).val(1);} else {$('#status').prop('checked',false).val(0);}
+      $('#author').val($(this).parents("tr").children("td").children(".author").text()).removeAttr('readonly');
+      $('#description').val($(this).parents("tr").children("td").children("div").children(".description").text()).removeAttr('readonly');
+      $('#img_src').val($(this).parents("tr").children("td").children(".img_src").text()).removeAttr('readonly');
+      $('#create_time').val($(this).parents("tr").children("td").children(".create_time").text());
+      $('#content').val($(this).parents("tr").children("td").children("div").children(".content").text()).removeAttr('readonly');
+      $('#source').val($(this).parents("tr").children("td").children(".source").text());
+    });
+    //修改提交按钮
+    $(document).on("click", "#UpdateDataBtn", function () {
+      $.ajax({
+        type: "post",
+        url: "/admin/blog_manager/update_data", //换成这个接口
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({
+          id:$("#id").val(),
+          title:$("#title").val(),
+          keyword:$("#keyword").val(),
+          status:$("#status").val(),
+          author:$("#author").val(),
+          description:$("#description").val(),
+          img_src:$("#img_src").val(),
+          create_time:$("#create_time").val(),
+          content:$("#content").val(),
+          source:$("#source").val(),
+        }),
+        success: function (data) {
+          if (data['msg'].indexOf('成功') != -1){
+            Toast.fire({
+            icon: 'success',
+            title: data['msg']});
+          }else{
+            Toast.fire({
+            icon: 'error',
+            title: data['msg']});
+          }
+        }
+      })
+      setTimeout(
+        function(){location.reload()},
+        2000);
+    });
+    // 将数据传输到删除弹框里
+    $(document).on("click", ".delete_btn1", function () {
+      $('#delete_id').val($(this).parents("tr").children("td").children(".id").val());
+      $('#delete_title').val($(this).parents("tr").children("td").children(".title").text());
+    });
+    //删除提交按钮
+    $(document).on("click", "#DeleteDataBtn", function () {
+      $.ajax({
+        type: "post",
+        url: "/admin/blog_manager/delete_data", //换成这个接口
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({
+          id:$("#delete_id").val(),
+        }),
+        success: function (data) {
+          if (data['msg'].indexOf('成功') != -1){
+            Toast.fire({
+            icon: 'success',
+            title: data['msg']});
+            setTimeout(
+            function(){location.reload()},
+            2000);
+          }else{
+            Toast.fire({
+            icon: 'error',
+            title: data['msg']});
+          }
+        }
+      })
+    });
+    //搜索提交按钮
+    $(document).on("click", "#search_btn", function () {
+      var q=$("#search_input").val()
+      console.log(q)
+      //console.log(table.columns().search(q))
+      table.search(q).draw();
+      // tb.destroy()
+      // tb=$('#testTable').DataTable({
+      //   ajax: './blog_manager/data?q='+q,
+      //   lengthMenu: [10, 20, 30, 60],
+      //   searching: false,
+      //   responsive: false,
+      //   processing: true,
+      //   autoWidth: true,
+      //   deferRender: true,
+      //   stateSave: true,
+      //   dom: '<"row"<"col-md-12"<"float-left"l><"#topPlugin.float-right">>>irt<"mt-3 pagination-sm"p>',
+      //   initComplete: renderTopPlugin,
+      //   ordering: false,
+      //   columns: [
+      //     {
+      //       data: "id",
+      //       render: function (data, type, row, meta) {
+      //         return '<input class="id" type="checkbox" value="' + data + '" name="id"/>';
+      //       }
+      //     },
+      //     {data: "title", render: function (data, type, row, meta) {
+      //         return '<div class="title">'+data+'</div>';
+      //       }},
+      //     {data: "keyword",render: function (data, type, row, meta) {
+      //         return '<div class="keyword">'+data+'</div>';
+      //       }},
+      //     {
+      //       data: "status",
+      //       render: function (data, type, row, meta) {
+      //         if (data === 1) {
+      //           data = '<div class="custom-control custom-switch custom-switch-on-success"><input type="checkbox" id="customSwitch' + row.id + '" class="custom-control-input sta777" value=1 checked><label class="custom-control-label" for="customSwitch' + row.id + '"></label></div>';
+      //         } else {
+      //           data = '<div class="custom-control custom-switch custom-switch-on-success"><input type="checkbox" id="customSwitch' + row.id + '" class="custom-control-input sta777" value=0><label class="custom-control-label" for="customSwitch' + row.id + '"></label></div>';
+      //         }
+      //         return data;
+      //       }},
+      //     {data:'author',render: function (data, type, row, meta) {
+      //       return "<div class='author'>" + data + "</div>"
+      //       }},
+      //     {data:'description',render: function (data, type, row, meta) {
+      //       return "<div>" + data.substring(0,30) + "..."+"<div class='description' style='display: none;'>"+ data+"</div>"+"</div>"
+      //       }},
+      //     {data: "content", render: function (data, type, row, meta) {
+      //         let temp = data.substring(0,30) + '...'
+      //         return "<div>" + temp + "<div class='content' style='display: none;'>" + data + "</div>" + "</div>";
+      //      }},
+      //     {data: "img_src", render: function (data, type, row, meta) {
+      //         return "<img src='"+data+"' width='100' height='30'>"+"<div class='img_src' style='display: none;'>" + data + "</div>";
+      //
+      //      }},
+      //     {data: "create_time",render: function (data, type, row, meta) {
+      //         return '<div class="create_time">'+data+'</div>';
+      //       }},
+      //     {data:'source',render: function (data, type, row, meta) {
+      //       return "<div class='source'>" + data + "</div>"
+      //       }},
+      //     {
+      //       render: function (data, type, row, meta) {
+      //         //check_data(row)
+      //         return '<button class="btn btn-primary btn-xs check_btn1" data-toggle="modal" data-target="#CheckDataModal">查看</button> <button class="btn btn-success btn-xs update_btn1" data-toggle="modal" data-target="#UpdateDataModal">修改</button> <button class="btn btn-danger btn-xs delete_btn1" data-toggle="modal" data-target="#DeleteDataModal">删除</button> '
+      //       }
+      //     }
+      //   ],
+      //   language: { // 国际化配置
+      //     decimal: "",
+      //     emptyTable: "表格为空",
+      //     info: "显示从_START_到_END_条记录 (总记录数为_TOTAL_条)",
+      //     infoEmpty: "记录数为0",
+      //     infoFiltered: "(从_MAX_条记录过滤)",
+      //     infoPostFix: "",
+      //     thousands: ",",
+      //     lengthMenu: "显示 _MENU_ 条",
+      //     loadingRecords: "Loading...",
+      //     processing: "正在获取数据，请稍后...",
+      //     sSearch: "搜索",
+      //     zeroRecords: "没有找到数据",
+      //     paginate: {
+      //       previous: "上一页",
+      //       first: "第一页",
+      //       next: "下一页",
+      //       last: "最后一页"
+      //     }
+      //   },
+      // });
+    });
+
+});
+</script>
+</body>
+</html>
